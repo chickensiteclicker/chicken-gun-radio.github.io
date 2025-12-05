@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicken Gun Radio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0a2a;
+            color: white;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .title {
+            color: #ffd700;
+            font-size: 48px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        
+        .subtitle {
+            color: #8888ff;
+            font-size: 18px;
+            margin-bottom: 50px;
+        }
+        
+        .player {
+            background: rgba(20, 20, 50, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .track-info {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+        
+        .now-playing, .next-track {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 8px;
+        }
+        
+        .next-track {
+            background: rgba(136, 136, 255, 0.1);
+        }
+        
+        .now-playing span, .next-track span {
+            font-weight: bold;
+            color: #ffd700;
+            padding: 6px 15px;
+            border-radius: 15px;
+            margin-right: 15px;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .now-playing span {
+            background: rgba(255, 215, 0, 0.2);
+        }
+        
+        .next-track span {
+            background: rgba(136, 136, 255, 0.2);
+            color: #8888ff;
+        }
+        
+        .now-playing div, .next-track div {
+            flex: 1;
+            text-align: left;
+            font-size: 18px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .now-playing div {
+            color: #ffd700;
+        }
+        
+        .next-track div {
+            color: #8888ff;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .play-btn {
+            background: #ffd700;
+            color: #000;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .play-btn:hover {
+            background: #ffed4e;
+        }
+        
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .volume-icon {
+            color: #ffd700;
+            font-size: 20px;
+        }
+        
+        .volume-slider {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            outline: none;
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ffd700;
+            cursor: pointer;
+        }
+        
+        .volume-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ffd700;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .track-counter {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .chicken-icon {
+            font-size: 40px;
+            margin-top: 20px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Chicken Gun Radio</h1>
+        <div class="subtitle">Лучшее радио для ЧГшеров!</div>
+        
+        <div class="player">
+            <div class="track-info">
+                <div class="now-playing">
+                    <span>СЕЙЧАС</span>
+                    <div id="currentTrackName">Загрузка...</div>
+                </div>
+                <div class="next-track">
+                    <span>ДАЛЕЕ</span>
+                    <div id="nextTrackName">Загрузка...</div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="play-btn" id="playBtn">▶</button>
+                
+                <div class="volume-control">
+                    <div class="volume-icon">🔊</div>
+                    <input type="range" class="volume-slider" id="volume" min="0" max="100" value="70">
+                </div>
+                
+                <div class="track-counter" id="trackCounter">-/-</div>
+            </div>
+        </div>
+        
+        <div class="chicken-icon">🐔</div>
+    </div>
+
+    <script>
+        // Плейлист с файлами из репозитория
+        const tracks = [
+            { file: 'Chicken Gun Radio Theme.wav', name: 'Chicken Gun Radio Theme' },
+            { file: '2_5211165360190938019.mp3', name: 'Фрузер - Чикен Ган' },
+            { file: '2_5217702966135391126.m4a', name: 'CONFESS YOUR LOVE FUNK' },
+            { file: '2_5260237852628781961.m4a', name: 'ДЫК КЫН ДЫШ' },
+            { file: 'Chicken Gun Radio Theme.wav', name: 'Chicken Gun Radio Theme (переход)' },
+            { file: '2_5260579736320512587.m4a', name: 'nyan.mp3 - Ну ну ну' },
+            { file: '2_5289559396790074637.m4a', name: 'Shockwave' },
+            { file: '2_5291829652078234540.mp3', name: 'КИТИК - Прощай чикен ган' },
+            { file: '2_5296430867722311297.m4a', name: 'MUEVELOU' },
+            { file: 'Chicken Gun Radio Theme.wav', name: 'Chicken Gun Radio Theme' },
+            { file: '2_5314254642698270059.mp3', name: 'STAY' },
+            { file: '2_5316715847937434820.mp3', name: 'Linkin Park - In the end' },
+            { file: '2_5334920333109505291.mp3', name: 'Chicken Gun' },
+            { file: '2_5357099200628668400.mp3', name: 'ESCAPED PHYCHOPATH' },
+            { file: 'Chicken Gun Radio Theme.wav', name: 'Chicken Gun Radio Theme' },
+            { file: '2_5384259302498255161.mp3', name: 'XOLIDAYBOY - Пожары' },
+            { file: '2_5431349555859842561.mp3', name: 'Песня с видео DEN19K' },
+            { file: '2_5431572696590746576.mp3', name: 'Diled13 - SG Peace theme' },
+            { file: '2_5436024692186046181.mp3', name: 'Pretty Scene Girl!' },
+            { file: 'Chicken Gun Radio Theme.wav', name: 'Chicken Gun Radio Theme' },
+            { file: '2_5445260491075130524.wav', name: 'Diled13 - SG Peace theme' },
+            { file: 'Duel V Chicken Gun.mp3', name: 'Дуэль в Чикен Ган' },
+            { file: 'Kyrinaya Rus.mp3', name: 'ЧикенРусь' },
+            { file: 'Kyriniy Ugar.mp3', name: 'Тупая тв вумен' },
+            { file: 'Chicken Gun Radio Theme.wav', name: 'Chicken Gun Radio Theme' },
+            { file: 'Typorylye Rpsheri.mp3', name: 'Дисс на срунки рп' },
+            { file: 'Chicken Gun Radio Theme.wav', name: 'Chicken Gun Radio Theme' }
+        ];
+
+        // Переменные плеера
+        let currentTrackIndex = 0;
+        let audio = new Audio();
+        let isPlaying = false;
+
+        // Получение URL файла
+        function getFileUrl(filename) {
+            return `https://raw.githubusercontent.com/chickensiteclicker/chicken-gun-radio.github.io/main/music/${encodeURIComponent(filename)}`;
+        }
+
+        // Получение следующего трека
+        function getNextTrackIndex() {
+            return (currentTrackIndex + 1) % tracks.length;
+        }
+
+        // Обновление информации
+        function updateTrackInfo() {
+            const currentTrack = tracks[currentTrackIndex];
+            const nextTrack = tracks[getNextTrackIndex()];
+            
+            document.getElementById('currentTrackName').textContent = currentTrack.name;
+            document.getElementById('nextTrackName').textContent = nextTrack.name;
+            document.getElementById('trackCounter').textContent = `${currentTrackIndex + 1}/${tracks.length}`;
+        }
+
+        // Загрузка трека
+        function loadTrack() {
+            const track = tracks[currentTrackIndex];
+            audio.src = getFileUrl(track.file);
+            
+            audio.onerror = function() {
+                document.getElementById('currentTrackName').textContent = 'Ошибка загрузки';
+                setTimeout(() => {
+                    currentTrackIndex = getNextTrackIndex();
+                    loadTrack();
+                }, 2000);
+            };
+            
+            audio.onloadeddata = function() {
+                updateTrackInfo();
+            };
+            
+            updateTrackInfo();
+            audio.load();
+        }
+
+        // Воспроизведение/пауза
+        function togglePlay() {
+            if (!audio.src) {
+                loadTrack();
+            }
+            
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+                document.getElementById('playBtn').textContent = '▶';
+            } else {
+                audio.play()
+                    .then(() => {
+                        isPlaying = true;
+                        document.getElementById('playBtn').textContent = '⏸';
+                    })
+                    .catch(() => {
+                        // Пробуем разблокировать аудио
+                        const silent = new Audio();
+                        silent.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ';
+                        silent.volume = 0.001;
+                        silent.play().then(() => {
+                            setTimeout(() => audio.play(), 100);
+                        });
+                    });
+            }
+        }
+
+        // Следующий трек
+        function nextTrack() {
+            audio.pause();
+            currentTrackIndex = getNextTrackIndex();
+            loadTrack();
+            
+            if (isPlaying) {
+                setTimeout(() => {
+                    audio.play().catch(() => {});
+                }, 300);
+            }
+        }
+
+        // Обработчики событий
+        document.getElementById('playBtn').addEventListener('click', togglePlay);
+        
+        document.getElementById('playBtn').addEventListener('dblclick', function(e) {
+            e.preventDefault();
+            nextTrack();
+        });
+
+        document.getElementById('volume').addEventListener('input', function(e) {
+            audio.volume = e.target.value / 100;
+            localStorage.setItem('chickenRadioVolume', audio.volume);
+        });
+
+        audio.addEventListener('ended', function() {
+            currentTrackIndex = getNextTrackIndex();
+            loadTrack();
+            if (isPlaying) {
+                setTimeout(() => audio.play(), 500);
+            }
+        });
+
+        // Инициализация
+        window.addEventListener('load', function() {
+            const savedVolume = localStorage.getItem('chickenRadioVolume');
+            if (savedVolume) {
+                audio.volume = parseFloat(savedVolume);
+                document.getElementById('volume').value = savedVolume * 100;
+            } else {
+                audio.volume = 0.7;
+            }
+            
+            audio.loop = false;
+            loadTrack();
+            
+            // Разблокировка аудио при клике
+            document.body.addEventListener('click', function unlockAudio() {
+                const silent = new Audio();
+                silent.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ';
+                silent.volume = 0.001;
+                silent.play().then(() => silent.pause());
+                document.body.removeEventListener('click', unlockAudio);
+            });
+        });
+    </script>
+</body>
+</html>
