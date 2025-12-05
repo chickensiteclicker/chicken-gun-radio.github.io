@@ -215,7 +215,7 @@
     </div>
 
     <script>
-        // Плейлист с файлами из репозитория
+
         const tracks = [
             { file: 'Chicken Gun Radio Theme.wav', name: 'Chicken Gun Radio Theme' },
             { file: '2_5211165360190938019.mp3', name: 'Фрузер - Чикен Ган' },
@@ -243,22 +243,22 @@
             { file: '2_5199415158597765075.mp3', name: 'Песня с видео KORESH24K'}
         ];
 
-        // Переменные плеера
+        
         let currentTrackIndex = 0;
         let audio = new Audio();
         let isPlaying = false;
 
-        // Получение URL файла
+        
         function getFileUrl(filename) {
             return `https://raw.githubusercontent.com/chickensiteclicker/chicken-gun-radio.github.io/main/music/${encodeURIComponent(filename)}`;
         }
 
-        // Получение следующего трека
+        
         function getNextTrackIndex() {
             return (currentTrackIndex + 1) % tracks.length;
         }
 
-        // Обновление информации
+        
         function updateTrackInfo() {
             const currentTrack = tracks[currentTrackIndex];
             const nextTrack = tracks[getNextTrackIndex()];
@@ -268,7 +268,7 @@
             document.getElementById('trackCounter').textContent = `${currentTrackIndex + 1}/${tracks.length}`;
         }
 
-        // Загрузка трека
+        
         function loadTrack() {
             const track = tracks[currentTrackIndex];
             audio.src = getFileUrl(track.file);
@@ -289,7 +289,8 @@
             audio.load();
         }
 
-        // Воспроизведение/пауза
+        /
+        
         function togglePlay() {
             if (!audio.src) {
                 loadTrack();
@@ -306,7 +307,7 @@
                         document.getElementById('playBtn').textContent = '⏸';
                     })
                     .catch(() => {
-                        // Пробуем разблокировать аудио
+                        
                         const silent = new Audio();
                         silent.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ';
                         silent.volume = 0.001;
@@ -317,7 +318,7 @@
             }
         }
 
-        // Следующий трек
+        
         function nextTrack() {
             audio.pause();
             currentTrackIndex = getNextTrackIndex();
@@ -330,7 +331,7 @@
             }
         }
 
-        // Обработчики событий
+        
         document.getElementById('playBtn').addEventListener('click', togglePlay);
         
         document.getElementById('playBtn').addEventListener('dblclick', function(e) {
@@ -351,7 +352,7 @@
             }
         });
 
-        // Инициализация
+        
         window.addEventListener('load', function() {
             const savedVolume = localStorage.getItem('chickenRadioVolume');
             if (savedVolume) {
@@ -364,7 +365,7 @@
             audio.loop = false;
             loadTrack();
             
-            // Разблокировка аудио при клике
+            
             document.body.addEventListener('click', function unlockAudio() {
                 const silent = new Audio();
                 silent.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ';
