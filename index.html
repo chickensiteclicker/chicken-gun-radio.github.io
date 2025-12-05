@@ -215,7 +215,6 @@
     </div>
 
     <script>
-
         const tracks = [
             { file: 'Chicken Gun Radio Theme.wav', name: 'Chicken Gun Radio Theme' },
             { file: '2_5211165360190938019.mp3', name: 'Фрузер - Чикен Ган' },
@@ -242,23 +241,21 @@
             { file: 'Chicken Gun Radio Theme.wav', name: 'Chicken Gun Radio Theme' }, 
             { file: '2_5199415158597765075.mp3', name: 'Песня с видео KORESH24K'}
         ];
-
         
         let currentTrackIndex = 0;
         let audio = new Audio();
         let isPlaying = false;
+        let audioContext = null;
+        let isAudioContextInitialized = false;
 
-        
         function getFileUrl(filename) {
             return `https://raw.githubusercontent.com/chickensiteclicker/chicken-gun-radio.github.io/main/music/${encodeURIComponent(filename)}`;
         }
 
-        
         function getNextTrackIndex() {
             return (currentTrackIndex + 1) % tracks.length;
         }
 
-        
         function updateTrackInfo() {
             const currentTrack = tracks[currentTrackIndex];
             const nextTrack = tracks[getNextTrackIndex()];
@@ -268,12 +265,14 @@
             document.getElementById('trackCounter').textContent = `${currentTrackIndex + 1}/${tracks.length}`;
         }
 
-        
         function loadTrack() {
             const track = tracks[currentTrackIndex];
-            audio.src = getFileUrl(track.file);
+            const trackUrl = getFileUrl(track.file);
+            
+            audio.src = trackUrl;
             
             audio.onerror = function() {
+                console.error('Ошибка загрузки трека:', trackUrl);
                 document.getElementById('currentTrackName').textContent = 'Ошибка загрузки';
                 setTimeout(() => {
                     currentTrackIndex = getNextTrackIndex();
@@ -286,11 +285,15 @@
             };
             
             updateTrackInfo();
-            audio.load();
         }
 
-        /
-        
+        function initializeAudioContext() {
+            if (!isAudioContextInitialized) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                isAudioContextInitialized = true;
+            }
+        }
+
         function togglePlay() {
             if (!audio.src) {
                 loadTrack();
@@ -301,24 +304,38 @@
                 isPlaying = false;
                 document.getElementById('playBtn').textContent = '▶';
             } else {
+                initializeAudioContext();
+                
+                if (audioContext && audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                
                 audio.play()
                     .then(() => {
                         isPlaying = true;
                         document.getElementById('playBtn').textContent = '⏸';
                     })
-                    .catch(() => {
+                    .catch((error) => {
+                        console.error('Ошибка воспроизведения:', error);
+                        document.getElementById('currentTrackName').textContent = 'Нажмите еще раз';
                         
                         const silent = new Audio();
                         silent.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ';
                         silent.volume = 0.001;
                         silent.play().then(() => {
-                            setTimeout(() => audio.play(), 100);
+                            setTimeout(() => {
+                                audio.play().then(() => {
+                                    isPlaying = true;
+                                    document.getElementById('playBtn').textContent = '⏸';
+                                }).catch(() => {
+                                    document.getElementById('currentTrackName').textContent = 'Не удалось воспроизвести';
+                                });
+                            }, 100);
                         });
                     });
             }
         }
 
-        
         function nextTrack() {
             audio.pause();
             currentTrackIndex = getNextTrackIndex();
@@ -326,12 +343,13 @@
             
             if (isPlaying) {
                 setTimeout(() => {
-                    audio.play().catch(() => {});
+                    audio.play().catch((error) => {
+                        console.error('Ошибка воспроизведения следующего трека:', error);
+                    });
                 }, 300);
             }
         }
 
-        
         document.getElementById('playBtn').addEventListener('click', togglePlay);
         
         document.getElementById('playBtn').addEventListener('dblclick', function(e) {
@@ -340,24 +358,31 @@
         });
 
         document.getElementById('volume').addEventListener('input', function(e) {
-            audio.volume = e.target.value / 100;
-            localStorage.setItem('chickenRadioVolume', audio.volume);
+            const volume = e.target.value / 100;
+            audio.volume = volume;
+            localStorage.setItem('chickenRadioVolume', volume);
         });
 
         audio.addEventListener('ended', function() {
             currentTrackIndex = getNextTrackIndex();
             loadTrack();
             if (isPlaying) {
-                setTimeout(() => audio.play(), 500);
+                setTimeout(() => audio.play().catch(() => {}), 500);
             }
         });
 
-        
+        audio.addEventListener('error', function(e) {
+            console.error('Audio error:', audio.error);
+            document.getElementById('currentTrackName').textContent = 'Ошибка трека';
+            setTimeout(nextTrack, 2000);
+        });
+
         window.addEventListener('load', function() {
             const savedVolume = localStorage.getItem('chickenRadioVolume');
             if (savedVolume) {
-                audio.volume = parseFloat(savedVolume);
-                document.getElementById('volume').value = savedVolume * 100;
+                const volume = parseFloat(savedVolume);
+                audio.volume = volume;
+                document.getElementById('volume').value = volume * 100;
             } else {
                 audio.volume = 0.7;
             }
@@ -365,14 +390,25 @@
             audio.loop = false;
             loadTrack();
             
-            
             document.body.addEventListener('click', function unlockAudio() {
+                initializeAudioContext();
+                
                 const silent = new Audio();
                 silent.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ';
                 silent.volume = 0.001;
-                silent.play().then(() => silent.pause());
+                silent.play().then(() => {
+                    silent.pause();
+                    if (audioContext) {
+                        audioContext.resume();
+                    }
+                }).catch(() => {});
+                
                 document.body.removeEventListener('click', unlockAudio);
             });
+        });
+
+        window.addEventListener('beforeunload', function() {
+            audio.pause();
         });
     </script>
 </body>
