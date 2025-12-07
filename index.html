@@ -251,7 +251,7 @@
 <body>
     <div class="container">
         <div class="logo-container">
-            <!-- Логотип будет автоматически загружен здесь -->
+            
             <img id="customLogo" class="custom-logo" alt="Chicken Gun Radio Logo">
             <div id="logoFallback" class="logo-fallback">Логотип не найден</div>
         </div>
@@ -283,10 +283,10 @@
             </div>
         </div>
         
-        <!-- Логотип внизу (опционально) -->
+        
         <img id="footerLogo" class="footer-logo" alt="Chicken Gun Radio Footer Logo">
         
-        <!-- Кнопка подписки на Telegram -->
+        
         <a href="https://t.me/chickengunradio" target="_blank" class="subscribe-btn">
             <span class="tg-icon">📢</span>
             Подписаться на ТГ
@@ -294,20 +294,20 @@
     </div>
 
     <script>
-        // Конфигурация логотипа - здесь можно указать имя файла
+        
         const LOGO_CONFIG = {
-            // Укажите имя файла логотипа (например: 'logo.png', 'my_logo.png')
-            // Файл должен находиться в корне сайта или в папке images/
-            logoFile: 'logo.png', // Основной логотип над заголовком
             
-            // Опционально: отдельный логотип для нижней части
-            footerLogoFile: null, // Если null, будет использован основной логотип
             
-            // Показывать ли логотип внизу (над кнопкой Telegram)
+            logoFile: 'IMG_20251207_202118_153.png', 
+            
+            
+            footerLogoFile: null, 
+            
+            
             showFooterLogo: false
         };
 
-        // Основные треки
+        
         const tracks = [
             { file: 'Chicken Gun Radio Theme.wav', name: 'Chicken Gun Radio Theme' },
             { file: '2_5211165360190938019.mp3', name: 'Фрузер - Чикен Ган' },
@@ -346,28 +346,28 @@
         }
 
         function getLogoUrl(filename) {
-            // Пробуем разные пути для логотипа
+            
             const baseUrl = 'https://raw.githubusercontent.com/chickensiteclicker/chicken-gun-radio.github.io/main/';
             const paths = [
-                filename, // Прямо в корне
+                filename, 
                       ];
             
-            // Пробуем разные форматы файлов
+            
             const extensions = ['.png', '.jpg', '.jpeg', '.gif', '.svg'];
             let filesToTry = [];
             
             paths.forEach(path => {
-                // Файл как указано
+                
                 filesToTry.push(path);
                 
-                // Файл с разными расширениями
+                
                 const baseName = path.replace(/\.[^/.]+$/, "");
                 extensions.forEach(ext => {
                     filesToTry.push(baseName + ext);
                 });
             });
             
-            // Пробуем каждую комбинацию
+            
             return filesToTry.map(file => baseUrl + encodeURIComponent(file));
         }
 
@@ -389,29 +389,28 @@
             const logoFallback = document.getElementById('logoFallback');
             const footerLogo = document.getElementById('footerLogo');
             
-            // Сначала пробуем загрузить основной логотип
+            
             const logoUrls = getLogoUrl(LOGO_CONFIG.logoFile);
             
             tryLoadLogo(logoImg, logoUrls, () => {
-                // Если не удалось загрузить, показываем сообщение
+                
                 logoFallback.style.display = 'flex';
                 logoFallback.textContent = 'Логотип не найден. Проверьте настройки LOGO_CONFIG.logoFile';
                 console.error('Не удалось загрузить логотип. Проверьте файл:', LOGO_CONFIG.logoFile);
             });
             
-            // Загружаем логотип для футера если нужно
             if (LOGO_CONFIG.showFooterLogo) {
                 let footerLogoUrls;
                 if (LOGO_CONFIG.footerLogoFile) {
                     footerLogoUrls = getLogoUrl(LOGO_CONFIG.footerLogoFile);
                 } else {
-                    // Используем тот же логотип
+            
                     footerLogoUrls = logoUrls;
                 }
                 
                 tryLoadLogo(footerLogo, footerLogoUrls, () => {
                     footerLogo.style.display = 'none';
-                }, true); // true - при успехе показываем элемент
+                }, true); 
             } else {
                 footerLogo.style.display = 'none';
             }
@@ -440,7 +439,7 @@
                 
                 tempImg.onerror = function() {
                     currentIndex++;
-                    setTimeout(tryNext, 0); // Пробуем следующий URL
+                    setTimeout(tryNext, 0); 
                 };
                 
                 tempImg.src = url;
