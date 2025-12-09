@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicken Gun Radio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0a2a;
+            color: white;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .blurred-bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(15px) brightness(0.6);
+            transform: scale(1.1);
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+        
+        .blurred-bg-image.active {
+            opacity: 1;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            z-index: 1;
+            position: relative;
+        }
+        
+        .logo-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .custom-logo {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+            margin-bottom: 15px;
+            display: block;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+        }
+        
+        .title {
+            color: #ffd700;
+            font-size: 48px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        
+        .subtitle {
+            color: #8888ff;
+            font-size: 18px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 5px rgba(136, 136, 255, 0.3);
+        }
+        
+        .player {
+            background: rgba(20, 20, 50, 0.85);
+            border-radius: 15px;
+            padding: 30px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .track-info {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+        }
+        
+        .now-playing, .next-track {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: rgba(255, 215, 0, 0.15);
+            border-radius: 8px;
+        }
+        
+        .next-track {
+            background: rgba(136, 136, 255, 0.15);
+        }
+        
+        .now-playing span, .next-track span {
+            font-weight: bold;
+            color: #ffd700;
+            padding: 6px 15px;
+            border-radius: 15px;
+            margin-right: 15px;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .now-playing span {
+            background: rgba(255, 215, 0, 0.25);
+        }
+        
+        .next-track span {
+            background: rgba(136, 136, 255, 0.25);
+            color: #8888ff;
+        }
+        
+        .now-playing div, .next-track div {
+            flex: 1;
+            text-align: left;
+            font-size: 18px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .now-playing div {
+            color: #ffd700;
+        }
+        
+        .next-track div {
+            color: #8888ff;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .play-btn {
+            background: #ffd700;
+            color: #000;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+        
+        .play-btn:hover {
+            background: #ffed4e;
+            transform: scale(1.05);
+        }
+        
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .volume-icon {
+            color: #ffd700;
+            font-size: 20px;
+        }
+        
+        .volume-slider {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            outline: none;
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ffd700;
+            cursor: pointer;
+        }
+        
+        .volume-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ffd700;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .track-counter {
+            color: #8888ff;
+            font-size: 14px;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+        
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .subscribe-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(45deg, #0088cc, #00acee);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 168, 255, 0.3);
+            backdrop-filter: blur(5px);
+        }
+        
+        .subscribe-btn:hover {
+            background: linear-gradient(45deg, #0077b5, #0099ff);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 168, 255, 0.4);
+        }
+        
+        .subscribe-btn:active {
+            transform: translateY(0);
+        }
+        
+        .donate-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+        }
+        
+        .donate-btn:hover {
+            background: linear-gradient(45deg, #ffed4e, #ffc400);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+        }
+        
+        .donate-btn:active {
+            transform: translateY(0);
+        }
+        
+        .tg-icon {
+            font-size: 24px;
+        }
+        
+        .donate-icon {
+            font-size: 24px;
+        }
+        
+        .footer-logo {
+            max-width: 100%;
+            max-height: 100px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+            margin-top: 20px;
+            display: none;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 5px;
+        }
+        
+        .footer-logo.active {
+            display: inline-block;
+        }
+        
+        .logo-fallback {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            min-height: 150px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .background-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 150, 255, 0.3);
+            border: 1px solid #0096ff;
+            border-radius: 15px;
+            padding: 5px 15px;
+            font-size: 14px;
+            color: #87ceeb;
+            cursor: pointer;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+        
+        .background-control:hover {
+            background: rgba(0, 150, 255, 0.5);
+        }
+        
+        .background-error {
+            display: none;
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+            background: rgba(255, 50, 50, 0.3);
+            border: 1px solid #ff3232;
+            border-radius: 15px;
+            padding: 5px 15px;
+            font-size: 14px;
+            color: #ff9999;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="background-control" id="backgroundControl">Фон: вкл</div>
+    <div class="background-error" id="backgroundError">Фон не загружен</div>
+    
+    <div class="background-overlay">
+        <div class="blurred-bg-image" id="blurredBgImage"></div>
+    </div>
+    
+    <div class="container">
+        <div class="logo-container">
+            <img id="customLogo" class="custom-logo" alt="Chicken Gun Radio Logo">
+            <div id="logoFallback" class="logo-fallback">Логотип не найден</div>
+        </div>
+        
+        <h1 class="title">Chicken Gun Radio</h1>
+        <div class="subtitle">Лучшее радио для ЧГшеров!</div>
+        
+        <div class="player">
+            <div class="track-info">
+                <div class="now-playing">
+                    <span>СЕЙЧАС</span>
+                    <div id="currentTrackName">Загрузка...</div>
+                </div>
+                <div class="next-track">
+                    <span>ДАЛЕЕ</span>
+                    <div id="nextTrackName">Загрузка...</div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="play-btn" id="playBtn">▶</button>
+                
+                <div class="volume-control">
+                    <div class="volume-icon">🔊</div>
+                    <input type="range" class="volume-slider" id="volume" min="0" max="100" value="70">
+                </div>
+                
+                <div class="track-counter" id="trackCounter">-/-</div>
+            </div>
+        </div>
+        
+        <!-- Логотип внизу (опционально) -->
+        <img id="footerLogo" class="footer-logo" alt="Chicken Gun Radio Footer Logo">
+        
+        <!-- Контейнер с кнопками -->
+        <div class="buttons-container">
+            <!-- Кнопка подписки на Telegram -->
+            <a href="https://t.me/chickengunradio" target="_blank" class="subscribe-btn">
+                <span class="tg-icon">📢</span>
+                Подписаться на ТГ
+            </a>
+            
+            <!-- Кнопка доната -->
+            <a href="https://donatepay.ru/don/1444392" target="_blank" class="donate-btn">
+                <span class="donate-icon">💰</span>
+                Задонатить
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Конфигурация - здесь можно указать файлы
+        const CONFIG = {
+            // Логотип над заголовком
+            logoFile: 'logo.png',
+            
+            // Фоновая картинка (будет размыта)
+            backgroundImageFile: 'background.jpg',
+            
+            // Отдельный логотип для нижней части
+            footerLogoFile: null,
+            
+            // Показывать ли логотип внизу
+            showFooterLogo: false,
+            
+            // Включен ли размытый фон
+            backgroundEnabled: true
+        };
+
+        // Основные треки
+        const tracks = [
+            { file: 'Chicken Gun Radio Theme.wav', name: 'Chicken Gun Radio Theme' },
+            { file: '2_5211165360190938019.mp3', name: 'Фрузер - Чикен Ган' },
+            { file: 'YouTube CG.mp3', name: 'Ютуберы' },
+            { file: 'Pic CG.mp3', name: 'Художники' },             
+            { file: 'Chicken Gun Radio Theme.wav', name: 'Chicken Gun Radio Theme (переход)' },
+            { file: 'Builders.mp3', name: 'Строители' },
+            { file: 'Pullum Major CG.mp3', name: 'Пуллум и мажор' },             
+            { file: '2_5291829652078234540.mp3', name: 'КИТИК - Прощай чикен ган' },
+            { file: '2_5445260491075130524.wav', name: 'CGP OST' },
+            { file: 'Chicken Gun Radio Theme.wav', name: 'Chicken Gun Radio Theme' },
+            { file: '4_5879917134254973101.mp3', name: 'Пурчик виноват' },
+            { file: '2_5334920333109505291.mp3', name: 'Chicken Gun' },
+            { file: 'Chicken Gun Radio Theme.wav', name: 'Chicken Gun Radio Theme' }, 
+            { file: '2_5431349555859842561.mp3', name: 'Песня с видео DEN19K' },
+            { file: '2_5431572696590746576.mp3', name: 'Diled13 - SG Peace theme' }, 
+            { file: 'Chicken Gun Radio Theme.wav', name: 'Chicken Gun Radio Theme' },
+            { file: '2_5445260491075130524.wav', name: 'Diled13 - SG Peace theme' },
+            { file: 'Duel V Chicken Gun.mp3', name: 'Дуэль в Чикен Ган' },
+            { file: 'Kyrinaya Rus.mp3', name: 'ЧикенРусь' },
+            { file: 'Kyriniy Ugar.mp3', name: 'Тупая тв вумен' },
+            { file: 'Chicken Gun Radio Theme.wav', name: 'Chicken Gun Radio Theme' },
+            { file: 'Typorylye Rpsheri.mp3', name: 'Дисс на срунки рп' },
+            { file: 'Chicken Gun Radio Theme.wav', name: 'Chicken Gun Radio Theme' }, 
+            { file: '2_5199415158597765075.mp3', name: 'Песня с видео KORESH24K'}
+        ];
+
+        let currentTrackIndex = 0;
+        let audio = new Audio();
+        let isPlaying = false;
+        let audioContext = null;
+        let isAudioContextInitialized = false;
+
+        function getFileUrl(filename) {
+            return `https://raw.githubusercontent.com/chickensiteclicker/chicken-gun-radio.github.io/main/music/${encodeURIComponent(filename)}`;
+        }
+
+        function getImageUrl(filename) {
+            const baseUrl = 'https://raw.githubusercontent.com/chickensiteclicker/chicken-gun-radio.github.io/main/';
+            
+            // Пробуем разные пути для изображения
+            const paths = [
+                filename,
+                `images/${filename}`,
+                `img/${filename}`,
+                `assets/${filename}`,
+                `backgrounds/${filename}`,
+                `bg/${filename}`,
+                `фон/${filename}`
+            ];
+            
+            // Пробуем разные форматы файлов
+            const extensions = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.bmp'];
+            let filesToTry = [];
+            
+            paths.forEach(path => {
+                // Файл как указано
+                filesToTry.push(path);
+                
+                // Файл с разными расширениями
+                const baseName = path.replace(/\.[^/.]+$/, "");
+                extensions.forEach(ext => {
+                    filesToTry.push(baseName + ext);
+                });
+            });
+            
+            // Возвращаем массив всех возможных URL
+            return filesToTry.map(file => baseUrl + encodeURIComponent(file));
+        }
+
+        function getNextTrackIndex() {
+            return (currentTrackIndex + 1) % tracks.length;
+        }
+
+        function updateTrackInfo() {
+            const currentTrack = tracks[currentTrackIndex];
+            const nextTrack = tracks[getNextTrackIndex()];
+            
+            document.getElementById('currentTrackName').textContent = currentTrack.name;
+            document.getElementById('nextTrackName').textContent = nextTrack.name;
+            document.getElementById('trackCounter').textContent = `${currentTrackIndex + 1}/${tracks.length}`;
+        }
+
+        function loadImages() {
+            // Загружаем основной логотип
+            const logoUrls = getImageUrl(CONFIG.logoFile);
+            loadImage(document.getElementById('customLogo'), logoUrls, 
+                () => {
+                    document.getElementById('logoFallback').style.display = 'flex';
+                    document.getElementById('logoFallback').textContent = 'Логотип не найден';
+                },
+                () => {
+                    console.log('Логотип загружен');
+                }
+            );
+            
+            // Загружаем фоновую картинку
+            if (CONFIG.backgroundEnabled) {
+                const backgroundUrls = getImageUrl(CONFIG.backgroundImageFile);
+                loadImage(document.getElementById('blurredBgImage'), backgroundUrls, 
+                    () => {
+                        document.getElementById('backgroundError').style.display = 'block';
+                        document.getElementById('backgroundError').textContent = `Фон "${CONFIG.backgroundImageFile}" не найден`;
+                        
+                        // Пробуем альтернативные имена для фона
+                        const alternativeNames = ['background.png', 'bg.jpg', 'фон.png', 'background_image.jpg'];
+                        tryAlternativeBackgrounds(alternativeNames);
+                    },
+                    () => {
+                        console.log('Фоновое изображение загружено');
+                        document.getElementById('backgroundError').style.display = 'none';
+                    },
+                    true // isBackground - устанавливает как background-image
+                );
+            }
+            
+            // Загружаем логотип для футера если нужно
+            if (CONFIG.showFooterLogo && CONFIG.footerLogoFile) {
+                const footerLogoUrls = getImageUrl(CONFIG.footerLogoFile);
+                loadImage(document.getElementById('footerLogo'), footerLogoUrls, 
+                    () => {
+                        document.getElementById('footerLogo').style.display = 'none';
+                    },
+                    () => {
+                        document.getElementById('footerLogo').classList.add('active');
+                    }
+                );
+            }
+        }
+
+        function tryAlternativeBackgrounds(alternativeNames) {
+            for (let i = 0; i < alternativeNames.length; i++) {
+                const altUrls = getImageUrl(alternativeNames[i]);
+                const tempImg = new Image();
+                
+                tempImg.onload = function() {
+                    document.getElementById('blurredBgImage').style.backgroundImage = `url('${tempImg.src}')`;
+                    document.getElementById('blurredBgImage').classList.add('active');
+                    document.getElementById('backgroundError').style.display = 'none';
+                    console.log('Альтернативный фон загружен:', alternativeNames[i]);
+                };
+                
+                tempImg.src = altUrls[0]; // Пробуем только первый URL
+            }
+        }
+
+        function loadImage(element, urls, onError, onSuccess, isBackground = false) {
+            let currentIndex = 0;
+            
+            function tryNext() {
+                if (currentIndex >= urls.length) {
+                    onError();
+                    return;
+                }
+                
+                const url = urls[currentIndex];
+                const tempImg = new Image();
+                
+                tempImg.onload = function() {
+                    if (isBackground) {
+                        element.style.backgroundImage = `url('${url}')`;
+                        if (CONFIG.backgroundEnabled) {
+                            element.classList.add('active');
+                        }
+                    } else {
+                        element.src = url;
+                        element.style.display = 'block';
+                    }
+                    onSuccess();
+                };
+                
+                tempImg.onerror = function() {
+                    currentIndex++;
+                    setTimeout(tryNext, 0);
+                };
+                
+                tempImg.src = url;
+            }
+            
+            tryNext();
+        }
+
+        function toggleBackground() {
+            CONFIG.backgroundEnabled = !CONFIG.backgroundEnabled;
+            const background = document.getElementById('blurredBgImage');
+            const controlBtn = document.getElementById('backgroundControl');
+            
+            if (CONFIG.backgroundEnabled) {
+                background.classList.add('active');
+                controlBtn.textContent = 'Фон: вкл';
+                controlBtn.style.background = 'rgba(0, 150, 255, 0.5)';
+                controlBtn.style.borderColor = '#0096ff';
+            } else {
+                background.classList.remove('active');
+                controlBtn.textContent = 'Фон: выкл';
+                controlBtn.style.background = 'rgba(128, 128, 128, 0.3)';
+                controlBtn.style.borderColor = '#888';
+            }
+            
+            localStorage.setItem('chickenRadioBackgroundEnabled', CONFIG.backgroundEnabled);
+        }
+
+        function updateBackgroundControl() {
+            const controlBtn = document.getElementById('backgroundControl');
+            if (CONFIG.backgroundEnabled) {
+                controlBtn.textContent = 'Фон: вкл';
+                controlBtn.style.background = 'rgba(0, 150, 255, 0.5)';
+                controlBtn.style.borderColor = '#0096ff';
+            } else {
+                controlBtn.textContent = 'Фон: выкл';
+                controlBtn.style.background = 'rgba(128, 128, 128, 0.3)';
+                controlBtn.style.borderColor = '#888';
+            }
+        }
+
+        function loadTrack() {
+            const track = tracks[currentTrackIndex];
+            const trackUrl = getFileUrl(track.file);
+            
+            audio.src = trackUrl;
+            
+            audio.onerror = function() {
+                console.error('Ошибка загрузки трека:', trackUrl);
+                document.getElementById('currentTrackName').textContent = 'Ошибка загрузки';
+                setTimeout(() => {
+                    currentTrackIndex = getNextTrackIndex();
+                    loadTrack();
+                }, 2000);
+            };
+            
+            audio.onloadeddata = function() {
+                updateTrackInfo();
+            };
+            
+            updateTrackInfo();
+        }
+
+        function initializeAudioContext() {
+            if (!isAudioContextInitialized) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                isAudioContextInitialized = true;
+            }
+        }
+
+        function togglePlay() {
+            if (!audio.src) {
+                loadTrack();
+            }
+            
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+                document.getElementById('playBtn').textContent = '▶';
+            } else {
+                initializeAudioContext();
+                
+                if (audioContext && audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                
+                audio.play()
+                    .then(() => {
+                        isPlaying = true;
+                        document.getElementById('playBtn').textContent = '⏸';
+                    })
+                    .catch((error) => {
+                        console.error('Ошибка воспроизведения:', error);
+                        document.getElementById('currentTrackName').textContent = 'Нажмите еще раз';
+                        
+                        const silent = new Audio();
+                        silent.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ';
+                        silent.volume = 0.001;
+                        silent.play().then(() => {
+                            setTimeout(() => {
+                                audio.play().then(() => {
+                                    isPlaying = true;
+                                    document.getElementById('playBtn').textContent = '⏸';
+                                }).catch(() => {
+                                    document.getElementById('currentTrackName').textContent = 'Не удалось воспроизвести';
+                                });
+                            }, 100);
+                        });
+                    });
+            }
+        }
+
+        function nextTrack() {
+            audio.pause();
+            currentTrackIndex = getNextTrackIndex();
+            loadTrack();
+            
+            if (isPlaying) {
+                setTimeout(() => {
+                    audio.play().catch((error) => {
+                        console.error('Ошибка воспроизведения следующего трека:', error);
+                    });
+                }, 300);
+            }
+        }
+
+        // Инициализация
+        document.getElementById('playBtn').addEventListener('click', togglePlay);
+        
+        document.getElementById('playBtn').addEventListener('dblclick', function(e) {
+            e.preventDefault();
+            nextTrack();
+        });
+
+        document.getElementById('volume').addEventListener('input', function(e) {
+            const volume = e.target.value / 100;
+            audio.volume = volume;
+            localStorage.setItem('chickenRadioVolume', volume);
+        });
+
+        document.getElementById('backgroundControl').addEventListener('click', toggleBackground);
+
+        audio.addEventListener('ended', function() {
+            currentTrackIndex = getNextTrackIndex();
+            loadTrack();
+            if (isPlaying) {
+                setTimeout(() => audio.play().catch(() => {}), 500);
+            }
+        });
+
+        audio.addEventListener('error', function(e) {
+            console.error('Audio error:', audio.error);
+            document.getElementById('currentTrackName').textContent = 'Ошибка трека';
+            setTimeout(nextTrack, 2000);
+        });
+
+        window.addEventListener('load', function() {
+            // Загружаем настройки громкости
+            const savedVolume = localStorage.getItem('chickenRadioVolume');
+            if (savedVolume) {
+                const volume = parseFloat(savedVolume);
+                audio.volume = volume;
+                document.getElementById('volume').value = volume * 100;
+            } else {
+                audio.volume = 0.7;
+            }
+            
+            // Загружаем настройки фона
+            const savedBackgroundEnabled = localStorage.getItem('chickenRadioBackgroundEnabled');
+            if (savedBackgroundEnabled !== null) {
+                CONFIG.backgroundEnabled = savedBackgroundEnabled === 'true';
+            }
+            
+            // Обновляем контрол фона
+            updateBackgroundControl();
+            
+            // Загружаем все изображения
+            loadImages();
+            
+            audio.loop = false;
+            loadTrack();
+            
+            document.body.addEventListener('click', function unlockAudio() {
+                initializeAudioContext();
+                
+                const silent = new Audio();
+                silent.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ';
+                silent.volume = 0.001;
+                silent.play().then(() => {
+                    silent.pause();
+                    if (audioContext) {
+                        audioContext.resume();
+                    }
+                }).catch(() => {});
+                
+                document.body.removeEventListener('click', unlockAudio);
+            });
+        });
+
+        window.addEventListener('beforeunload', function() {
+            audio.pause();
+        });
+    </script>
+</body>
+</html>
