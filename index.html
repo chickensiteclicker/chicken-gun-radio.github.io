@@ -12,184 +12,218 @@
         }
         
         body {
-            background: #0a0a2a;
-            color: white;
             min-height: 100vh;
-            font-family: Arial, sans-serif;
+            font-family: "Inter", Arial, sans-serif;
+            color: #f7f8fc;
+            background: radial-gradient(circle at 20% 20%, rgba(255,215,0,0.14), transparent 30%),
+                        radial-gradient(circle at 80% 10%, rgba(0,180,255,0.12), transparent 28%),
+                        #0a0b1c;
             display: flex;
-            justify-content: center;
             align-items: center;
-            padding: 20px;
+            justify-content: center;
+            padding: 40px 24px;
             position: relative;
             overflow: hidden;
         }
         
         .background-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
+            inset: 0;
+            z-index: -2;
             overflow: hidden;
         }
         
         .blurred-bg-image {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            filter: blur(15px) brightness(0.6);
-            transform: scale(1.1);
+            filter: blur(18px) brightness(0.55);
+            transform: scale(1.12);
             opacity: 0;
-            transition: opacity 0.8s ease-in-out;
+            transition: opacity 0.9s ease-in-out;
         }
         
         .blurred-bg-image.active {
             opacity: 1;
         }
         
-        .container {
-            text-align: center;
-            max-width: 500px;
-            width: 100%;
-            z-index: 1;
+        .glass {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(14px);
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.35);
+            border-radius: 20px;
+        }
+        
+        .shell {
             position: relative;
+            z-index: 1;
+            width: min(1200px, 100%);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+        
+        .brand-panel {
+            padding: 32px;
+            gap: 20px;
+            display: flex;
+            flex-direction: column;
         }
         
         .logo-container {
-            position: relative;
-            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
         
         .custom-logo {
-            max-width: 100%;
-            max-height: 150px;
-            border-radius: 10px;
-            border: 2px solid rgba(255, 215, 0, 0.3);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-            margin-bottom: 15px;
-            display: block;
-            background-color: rgba(0, 0, 0, 0.5);
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 16px;
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.2);
+            background: rgba(0,0,0,0.45);
+            padding: 8px;
+            display: none;
+        }
+        
+        .logo-fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            height: 120px;
+            border-radius: 16px;
+            border: 1px dashed rgba(255,255,255,0.35);
+            color: #8c92a6;
+            font-style: italic;
+            text-align: center;
             padding: 10px;
         }
         
+        .headline {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
         .title {
+            font-size: clamp(36px, 5vw, 50px);
             color: #ffd700;
-            font-size: 48px;
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 24px rgba(255,215,0,0.45);
         }
         
         .subtitle {
-            color: #8888ff;
+            color: #c8d2ff;
             font-size: 18px;
-            margin-bottom: 30px;
-            text-shadow: 0 0 5px rgba(136, 136, 255, 0.3);
+            opacity: 0.9;
         }
         
-        .player {
-            background: rgba(20, 20, 50, 0.85);
-            border-radius: 15px;
-            padding: 30px;
-            border: 2px solid rgba(255, 215, 0, 0.3);
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .pill {
+            padding: 8px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.05);
+            color: #e8ecff;
+            font-size: 13px;
+        }
+        
+        .player-card {
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
         }
         
         .track-info {
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 10px;
+            display: grid;
+            gap: 12px;
         }
         
-        .now-playing, .next-track {
+        .track-row {
             display: flex;
             align-items: center;
-            margin-bottom: 15px;
-            padding: 12px;
-            background: rgba(255, 215, 0, 0.15);
-            border-radius: 8px;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: linear-gradient(90deg, rgba(255,215,0,0.12), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255,215,0,0.25);
         }
         
-        .next-track {
-            background: rgba(136, 136, 255, 0.15);
+        .track-row.next {
+            background: linear-gradient(90deg, rgba(116,163,255,0.12), rgba(255,255,255,0.02));
+            border-color: rgba(116,163,255,0.25);
         }
         
-        .now-playing span, .next-track span {
-            font-weight: bold;
-            color: #ffd700;
-            padding: 6px 15px;
-            border-radius: 15px;
-            margin-right: 15px;
-            min-width: 80px;
+        .track-badge {
+            min-width: 86px;
             text-align: center;
+            font-weight: 700;
+            padding: 8px 12px;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.35);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #ffd700;
         }
         
-        .now-playing span {
-            background: rgba(255, 215, 0, 0.25);
+        .track-row.next .track-badge {
+            color: #9ec3ff;
         }
         
-        .next-track span {
-            background: rgba(136, 136, 255, 0.25);
-            color: #8888ff;
-        }
-        
-        .now-playing div, .next-track div {
+        .track-title {
             flex: 1;
-            text-align: left;
             font-size: 18px;
+            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        
-        .now-playing div {
-            color: #ffd700;
-        }
-        
-        .next-track div {
-            color: #8888ff;
         }
         
         .controls {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 18px;
+            flex-wrap: wrap;
+            justify-content: space-between;
         }
         
         .play-btn {
-            background: #ffd700;
-            color: #000;
+            background: linear-gradient(150deg, #ffd700, #ffb347);
+            color: #0c0c16;
             border: none;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            font-size: 24px;
+            width: 68px;
+            height: 68px;
+            border-radius: 18px;
+            font-size: 26px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s ease;
+            display: grid;
+            place-items: center;
+            box-shadow: 0 12px 30px rgba(255, 215, 0, 0.3);
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
         }
         
         .play-btn:hover {
-            background: #ffed4e;
-            transform: scale(1.05);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 16px 40px rgba(255, 215, 0, 0.35);
         }
         
         .volume-control {
             display: flex;
             align-items: center;
             gap: 10px;
-            width: 100%;
-            max-width: 250px;
+            flex: 1;
+            min-width: 200px;
         }
         
         .volume-icon {
@@ -199,10 +233,11 @@
         
         .volume-slider {
             flex: 1;
-            height: 6px;
+            height: 8px;
             -webkit-appearance: none;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.18);
+            border-radius: 999px;
             outline: none;
         }
         
@@ -212,6 +247,8 @@
             height: 18px;
             border-radius: 50%;
             background: #ffd700;
+            border: 2px solid #0c0c16;
+            box-shadow: 0 0 0 4px rgba(255,215,0,0.18);
             cursor: pointer;
         }
         
@@ -220,152 +257,212 @@
             height: 18px;
             border-radius: 50%;
             background: #ffd700;
+            border: 2px solid #0c0c16;
+            box-shadow: 0 0 0 4px rgba(255,215,0,0.18);
             cursor: pointer;
-            border: none;
         }
         
         .track-counter {
-            color: #8888ff;
+            color: #c8d2ff;
             font-size: 14px;
-            margin-top: 10px;
-            opacity: 0.8;
+            opacity: 0.85;
         }
         
         .buttons-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
-            width: 100%;
-            max-width: 300px;
-            margin-left: auto;
-            margin-right: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 4px;
+        }
+        
+        .subscribe-btn, .donate-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+            color: #0c0c16;
         }
         
         .subscribe-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background: linear-gradient(45deg, #0088cc, #00acee);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 168, 255, 0.3);
-            backdrop-filter: blur(5px);
-        }
-        
-        .subscribe-btn:hover {
-            background: linear-gradient(45deg, #0077b5, #0099ff);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 168, 255, 0.4);
-        }
-        
-        .subscribe-btn:active {
-            transform: translateY(0);
+            background: linear-gradient(120deg, #00b4ff, #5ad0ff);
+            box-shadow: 0 10px 30px rgba(0, 180, 255, 0.3);
+            color: #0d1a2a;
         }
         
         .donate-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background: linear-gradient(45deg, #ffd700, #ffaa00);
-            color: #000;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-            backdrop-filter: blur(5px);
-            border: 2px solid rgba(255, 215, 0, 0.5);
+            background: linear-gradient(120deg, #ffd700, #ffb347);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+            color: #0c0c16;
+            border: 1px solid rgba(255, 215, 0, 0.45);
         }
         
-        .donate-btn:hover {
-            background: linear-gradient(45deg, #ffed4e, #ffc400);
+        .subscribe-btn:hover, .donate-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+            box-shadow: 0 14px 36px rgba(0,0,0,0.25);
         }
         
-        .donate-btn:active {
+        .subscribe-btn:active, .donate-btn:active {
             transform: translateY(0);
+            opacity: 0.9;
         }
         
-        .tg-icon {
-            font-size: 24px;
-        }
-        
-        .donate-icon {
-            font-size: 24px;
+        .tg-icon, .donate-icon {
+            font-size: 20px;
         }
         
         .footer-logo {
-            max-width: 100%;
-            max-height: 100px;
-            border-radius: 10px;
-            border: 2px solid rgba(255, 215, 0, 0.3);
+            max-width: 120px;
+            max-height: 80px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.25);
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
-            margin-top: 20px;
+            margin-top: 8px;
             display: none;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 5px;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding: 6px;
         }
         
         .footer-logo.active {
             display: inline-block;
         }
         
-        .logo-fallback {
-            display: none;
-            justify-content: center;
-            align-items: center;
-            min-height: 150px;
-            color: #666;
-            font-style: italic;
-        }
-        
         .background-control {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 150, 255, 0.3);
+            bottom: 18px;
+            right: 18px;
+            background: rgba(0, 150, 255, 0.28);
             border: 1px solid #0096ff;
-            border-radius: 15px;
-            padding: 5px 15px;
+            border-radius: 14px;
+            padding: 8px 14px;
             font-size: 14px;
-            color: #87ceeb;
+            color: #bde2ff;
             cursor: pointer;
             z-index: 100;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(6px);
+            transition: all 0.18s ease;
         }
         
         .background-control:hover {
-            background: rgba(0, 150, 255, 0.5);
+            background: rgba(0, 150, 255, 0.45);
+            transform: translateY(-2px);
         }
         
         .background-error {
             display: none;
             position: fixed;
             bottom: 60px;
-            right: 20px;
-            background: rgba(255, 50, 50, 0.3);
+            right: 18px;
+            background: rgba(255, 50, 50, 0.28);
             border: 1px solid #ff3232;
-            border-radius: 15px;
-            padding: 5px 15px;
+            border-radius: 14px;
+            padding: 8px 14px;
             font-size: 14px;
-            color: #ff9999;
+            color: #ffb3b3;
             z-index: 100;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(6px);
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 14px 72px;
+            }
+            
+            .shell {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .brand-panel,
+            .player-card {
+                padding: 20px;
+            }
+            
+            .logo-container {
+                align-items: flex-start;
+            }
+            
+            .custom-logo,
+            .logo-fallback {
+                width: 96px;
+                height: 96px;
+            }
+            
+            .track-row {
+                align-items: flex-start;
+            }
+            
+            .track-title {
+                white-space: normal;
+                line-height: 1.3;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            
+            .play-btn {
+                width: 100%;
+                height: 60px;
+                border-radius: 14px;
+            }
+            
+            .volume-control {
+                width: 100%;
+            }
+            
+            .track-badge {
+                min-width: 78px;
+            }
+            
+            .buttons-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .subtitle {
+                font-size: 16px;
+            }
+            
+            .pill {
+                font-size: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 16px 12px 64px;
+            }
+            
+            .custom-logo,
+            .logo-fallback {
+                width: 88px;
+                height: 88px;
+            }
+            
+            .player-card {
+                padding: 18px;
+            }
+            
+            .title {
+                font-size: clamp(30px, 9vw, 38px);
+            }
+            
+            .track-row {
+                padding: 10px 12px;
+            }
+            
+            .track-title {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
@@ -377,24 +474,32 @@
         <div class="blurred-bg-image" id="blurredBgImage"></div>
     </div>
     
-    <div class="container">
-        <div class="logo-container">
-            <img id="customLogo" class="custom-logo" alt="Chicken Gun Radio Logo">
-            <div id="logoFallback" class="logo-fallback">Логотип не найден</div>
+    <div class="shell glass">
+        <div class="brand-panel glass">
+            <div class="logo-container">
+                <img id="customLogo" class="custom-logo" alt="Chicken Gun Radio Logo">
+                <div class="headline">
+                    <h1 class="title">Chicken Gun Radio</h1>
+                    <div class="subtitle">Лучшее радио для ЧГшеров!</div>
+                    <div class="pill-row">
+                        <span class="pill">Онлайн-эфир 24/7</span>
+                        <span class="pill">Треки комьюнити</span>
+                        <span class="pill">Made by Super1CH and Midga3</span>
+                    </div>
+                </div>
+            </div>
+            <img id="footerLogo" class="footer-logo" alt="Chicken Gun Radio Footer Logo">
         </div>
         
-        <h1 class="title">Chicken Gun Radio</h1>
-        <div class="subtitle">Лучшее радио для ЧГшеров!</div>
-        
-        <div class="player">
+        <div class="player-card glass">
             <div class="track-info">
-                <div class="now-playing">
-                    <span>СЕЙЧАС</span>
-                    <div id="currentTrackName">Загрузка...</div>
+                <div class="track-row">
+                    <div class="track-badge">СЕЙЧАС</div>
+                    <div id="currentTrackName" class="track-title">Загрузка...</div>
                 </div>
-                <div class="next-track">
-                    <span>ДАЛЕЕ</span>
-                    <div id="nextTrackName">Загрузка...</div>
+                <div class="track-row next">
+                    <div class="track-badge">ДАЛЕЕ</div>
+                    <div id="nextTrackName" class="track-title">Загрузка...</div>
                 </div>
             </div>
             
@@ -408,24 +513,17 @@
                 
                 <div class="track-counter" id="trackCounter">-/-</div>
             </div>
-        </div>
-        
-        <!-- Логотип внизу (опционально) -->
-        <img id="footerLogo" class="footer-logo" alt="Chicken Gun Radio Footer Logo">
-        
-        <!-- Контейнер с кнопками -->
-        <div class="buttons-container">
-            <!-- Кнопка подписки на Telegram -->
-            <a href="https://t.me/chickengunradio" target="_blank" class="subscribe-btn">
-                <span class="tg-icon">📢</span>
-                Подписаться на ТГ
-            </a>
             
-            <!-- Кнопка доната -->
-            <a href="https://donatepay.ru/don/1444392" target="_blank" class="donate-btn">
-                <span class="donate-icon">💰</span>
-                Задонатить
-            </a>
+            <div class="buttons-container">
+                <a href="https://t.me/chickengunradio" target="_blank" class="subscribe-btn">
+                    <span class="tg-icon">📢</span>
+                    Подписаться на ТГ
+                </a>
+                <a href="https://donatepay.ru/don/1444392" target="_blank" class="donate-btn">
+                    <span class="donate-icon">💰</span>
+                    Задонатить
+                </a>
+            </div>
         </div>
     </div>
 
@@ -445,7 +543,10 @@
             showFooterLogo: false,
             
             // Включен ли размытый фон
-            backgroundEnabled: true
+            backgroundEnabled: true,
+
+            // Воспроизведение треков в случайном порядке
+            randomPlayback: true
         };
 
         // Основные треки
@@ -481,13 +582,17 @@
         let isPlaying = false;
         let audioContext = null;
         let isAudioContextInitialized = false;
+        let resumeTime = 0;
+        let lastSaveTimestamp = 0;
+        const STATE_KEY = 'chickenRadioState';
+        let upcomingTrackIndex = null;
 
         function getFileUrl(filename) {
             return `https://raw.githubusercontent.com/chickensiteclicker/chicken-gun-radio.github.io/main/music/${encodeURIComponent(filename)}`;
         }
 
         function getImageUrl(filename) {
-            const baseUrl = 'https://raw.githubusercontent.com/chickensiteclicker/chicken-gun-radio.github.io/main/';
+            const rawBase = 'https://raw.githubusercontent.com/chickensiteclicker/chicken-gun-radio.github.io/main/';
             
             // Пробуем разные пути для изображения
             const paths = [
@@ -515,17 +620,53 @@
                 });
             });
             
-            // Возвращаем массив всех возможных URL
-            return filesToTry.map(file => baseUrl + encodeURIComponent(file));
+            // Составляем варианты URL: локальные и raw.githubusercontent
+            const urls = [];
+            const seen = new Set();
+            filesToTry.forEach(file => {
+                const local = encodeURI(file);
+                const localRoot = '/' + local;
+                // Для raw.githubusercontent нужен encodeURI, чтобы не кодировать слеши
+                const remote = rawBase + encodeURI(file);
+                [local, localRoot, remote].forEach(url => {
+                    if (!seen.has(url)) {
+                        urls.push(url);
+                        seen.add(url);
+                    }
+                });
+            });
+            
+            return urls;
         }
 
-        function getNextTrackIndex() {
-            return (currentTrackIndex + 1) % tracks.length;
+        function computeNextTrackIndex() {
+            if (!CONFIG.randomPlayback) {
+                return (currentTrackIndex + 1) % tracks.length;
+            }
+            
+            if (tracks.length <= 1) {
+                return currentTrackIndex;
+            }
+            
+            let nextIndex = currentTrackIndex;
+            while (nextIndex === currentTrackIndex) {
+                nextIndex = Math.floor(Math.random() * tracks.length);
+            }
+            return nextIndex;
+        }
+
+        function setUpcomingTrack(force = false) {
+            if (upcomingTrackIndex === null || force) {
+                upcomingTrackIndex = computeNextTrackIndex();
+            }
         }
 
         function updateTrackInfo() {
             const currentTrack = tracks[currentTrackIndex];
-            const nextTrack = tracks[getNextTrackIndex()];
+            if (upcomingTrackIndex === null) {
+                setUpcomingTrack(true);
+            }
+            const nextTrack = tracks[upcomingTrackIndex];
             
             document.getElementById('currentTrackName').textContent = currentTrack.name;
             document.getElementById('nextTrackName').textContent = nextTrack.name;
@@ -537,8 +678,7 @@
             const logoUrls = getImageUrl(CONFIG.logoFile);
             loadImage(document.getElementById('customLogo'), logoUrls, 
                 () => {
-                    document.getElementById('logoFallback').style.display = 'flex';
-                    document.getElementById('logoFallback').textContent = 'Логотип не найден';
+                    document.getElementById('logoFallback').style.display = 'none';
                 },
                 () => {
                     console.log('Логотип загружен');
@@ -669,18 +809,29 @@
             const trackUrl = getFileUrl(track.file);
             
             audio.src = trackUrl;
+            setUpcomingTrack(true);
             
             audio.onerror = function() {
                 console.error('Ошибка загрузки трека:', trackUrl);
                 document.getElementById('currentTrackName').textContent = 'Ошибка загрузки';
                 setTimeout(() => {
-                    currentTrackIndex = getNextTrackIndex();
+                    currentTrackIndex = computeNextTrackIndex();
+                    setUpcomingTrack(true);
                     loadTrack();
                 }, 2000);
             };
             
             audio.onloadeddata = function() {
+                if (resumeTime > 0) {
+                    try {
+                        audio.currentTime = Math.min(resumeTime, audio.duration || resumeTime);
+                    } catch (e) {
+                        console.warn('Не удалось установить время воспроизведения', e);
+                    }
+                    resumeTime = 0;
+                }
                 updateTrackInfo();
+                savePlaybackState();
             };
             
             updateTrackInfo();
@@ -713,6 +864,7 @@
                     .then(() => {
                         isPlaying = true;
                         document.getElementById('playBtn').textContent = '⏸';
+                        savePlaybackState();
                     })
                     .catch((error) => {
                         console.error('Ошибка воспроизведения:', error);
@@ -726,6 +878,7 @@
                                 audio.play().then(() => {
                                     isPlaying = true;
                                     document.getElementById('playBtn').textContent = '⏸';
+                                    savePlaybackState();
                                 }).catch(() => {
                                     document.getElementById('currentTrackName').textContent = 'Не удалось воспроизвести';
                                 });
@@ -737,8 +890,13 @@
 
         function nextTrack() {
             audio.pause();
-            currentTrackIndex = getNextTrackIndex();
+            if (upcomingTrackIndex === null) {
+                setUpcomingTrack();
+            }
+            currentTrackIndex = upcomingTrackIndex;
+            resumeTime = 0;
             loadTrack();
+            setUpcomingTrack(true);
             
             if (isPlaying) {
                 setTimeout(() => {
@@ -749,14 +907,37 @@
             }
         }
 
+        function savePlaybackState() {
+            try {
+                const state = {
+                    trackIndex: currentTrackIndex,
+                    position: audio.currentTime || 0
+                };
+                localStorage.setItem(STATE_KEY, JSON.stringify(state));
+            } catch (e) {
+                console.warn('Не удалось сохранить состояние', e);
+            }
+        }
+
+        function restorePlaybackState() {
+            try {
+                const raw = localStorage.getItem(STATE_KEY);
+                if (!raw) return;
+                const parsed = JSON.parse(raw);
+                if (Number.isInteger(parsed.trackIndex) && parsed.trackIndex >= 0 && parsed.trackIndex < tracks.length) {
+                    currentTrackIndex = parsed.trackIndex;
+                }
+                if (typeof parsed.position === 'number' && parsed.position > 0) {
+                    resumeTime = parsed.position;
+                }
+            } catch (e) {
+                console.warn('Не удалось восстановить состояние', e);
+            }
+        }
+
         // Инициализация
         document.getElementById('playBtn').addEventListener('click', togglePlay);
         
-        document.getElementById('playBtn').addEventListener('dblclick', function(e) {
-            e.preventDefault();
-            nextTrack();
-        });
-
         document.getElementById('volume').addEventListener('input', function(e) {
             const volume = e.target.value / 100;
             audio.volume = volume;
@@ -766,7 +947,12 @@
         document.getElementById('backgroundControl').addEventListener('click', toggleBackground);
 
         audio.addEventListener('ended', function() {
-            currentTrackIndex = getNextTrackIndex();
+            if (upcomingTrackIndex === null) {
+                setUpcomingTrack(true);
+            }
+            currentTrackIndex = upcomingTrackIndex;
+            setUpcomingTrack(true);
+            resumeTime = 0;
             loadTrack();
             if (isPlaying) {
                 setTimeout(() => audio.play().catch(() => {}), 500);
@@ -779,7 +965,19 @@
             setTimeout(nextTrack, 2000);
         });
 
+        audio.addEventListener('pause', savePlaybackState);
+        
+        audio.addEventListener('timeupdate', function() {
+            const now = Date.now();
+            if (now - lastSaveTimestamp > 3000) {
+                savePlaybackState();
+                lastSaveTimestamp = now;
+            }
+        });
+
         window.addEventListener('load', function() {
+            restorePlaybackState();
+            
             // Загружаем настройки громкости
             const savedVolume = localStorage.getItem('chickenRadioVolume');
             if (savedVolume) {
@@ -824,6 +1022,7 @@
 
         window.addEventListener('beforeunload', function() {
             audio.pause();
+            savePlaybackState();
         });
     </script>
 </body>
