@@ -1027,6 +1027,35 @@
             audio.pause();
             savePlaybackState();
         });
-    </script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const player = document.getElementById('player');
+    const playBtn = document.getElementById('playBtn');
+    
+    // Попытка автоматического запуска
+    function autoPlay() {
+        if (player.paused) {
+            player.play().then(() => {
+                console.log('Автовоспроизведение запущено');
+                playBtn.textContent = '⏸️ Пауза';
+            }).catch(error => {
+                console.log('Автовоспроизведение заблокировано:', error);
+                // Показать кнопку воспроизведения, если автовоспроизведение заблокировано
+                playBtn.textContent = '▶️ Включить радио';
+                playBtn.style.display = 'block';
+            });
+        }
+    }
+    
+    // Запустить воспроизведение после небольшой задержки
+    setTimeout(autoPlay, 500);
+    
+    // Альтернатива: запуск по клику на странице (для обхода политики браузеров)
+    document.body.addEventListener('click', function firstClick() {
+        autoPlay();
+        document.body.removeEventListener('click', firstClick);
+    }, { once: true });
+});
+</script>
 </body>
       </html>
